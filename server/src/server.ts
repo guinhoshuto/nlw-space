@@ -1,8 +1,21 @@
+import 'dotenv/config'
+
 import fastify from 'fastify'
-import { PrismaClient } from '@prisma/client'
+import { memoriesRoutes } from './routes/memories'
+import cors from '@fastify/cors'
+import { authRoutes } from './routes/auth'
+import jwt from '@fastify/jwt'
 
 const app = fastify()
-const prisma = new PrismaClient()
+app.register(cors, {
+  origin: true,
+})
+app.register(jwt, {
+  secret: 'spacetime',
+})
+
+app.register(memoriesRoutes)
+app.register(authRoutes)
 
 app
   .listen({
@@ -12,7 +25,7 @@ app
     console.log('🚀 SERVER RUNNING ON http://localhost:3333')
   })
 
-app.get('/', async () => {
-  const users = await prisma.user.findMany()
-  return users
-})
+// app.get('/', async () => {
+//   // const users = await prisma.user.findMany()
+//   // return users
+// })
